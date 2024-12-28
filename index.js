@@ -1,27 +1,24 @@
-const mongoose = require("mongoose")
-const express = require('express')
-const http = require('http');
-const bodyParser = require('body-parser')
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
-const app = express()
+const mongoose = require("mongoose");
+const express = require("express");
+const http = require("http");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const app = express();
 const path = require("path");
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-const cors = require('cors')
+const cors = require("cors");
 
+app.use(
+  cors({
+    origin: `https://bpony-kfc-clone.vercel.app`,
+    credentials: true,
+  })
+);
 
-app.use(cors({
-   
-    origin:`http://localhost:5173`,
-  
-    credentials: true
-}));
-
-
-
-require('dotenv').config();
+require("dotenv").config();
 
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
@@ -35,19 +32,18 @@ const uri = `mongodb+srv://${username}:${password}@${cluster}/${dbname}?retryWri
 const connectDB = async () => {
   try {
     await mongoose.connect(uri);
-    console.log('Database Connected');
+    console.log("Database Connected");
   } catch (err) {
-    console.error('Database connection error:', err);
+    console.error("Database connection error:", err);
   }
 };
 
 connectDB();
 
-const post_route = require('./routes/postRoute')
+const post_route = require("./routes/postRoute");
 
-app.use('/api',post_route)
+app.use("/api", post_route);
 
-
-app.listen(8000, function(){
-    console.log("Server is running");
-})
+app.listen(8000, function () {
+  console.log("Server is running");
+});

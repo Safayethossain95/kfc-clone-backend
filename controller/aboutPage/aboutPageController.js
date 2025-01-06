@@ -113,6 +113,37 @@ const cartDecrement = async (req, res) => {
     res.status(500).json({ error: "Failed to decrement cart item" });
   }
 };
+const cartIncrement = async (req, res) => {
+  try {
+    const { foodname, quantity } = req.body;
+
+    // Validate that quantity is a positive number
+    if (isNaN(quantity) || quantity <= 0) {
+      return res.status(400).json({ error: "Invalid quantity" });
+    }
+
+    // Find the existing cart item for the given foodname
+    let existingCart = await CartModel.findOne({ foodname });
+
+    if (!existingCart) {
+      // If the cart doesn't exist, return an error response
+      return res.status(404).json({ error: "Item not found in cart" });
+    }
+
+    // Increment the quantity of the existing cart item
+    existingCart.quantity += quantity;
+
+    // Save the updated cart
+    const updatedCart = await existingCart.save();
+    return res.status(200).json(updatedCart);
+
+  } catch (error) {
+    // Log the error and send a response
+    console.error(error);
+    res.status(500).json({ error: "Failed to increment cart item" });
+  }
+};
+
 
 
 
@@ -167,5 +198,6 @@ cartEdit,
 cartDelete,
 foodPost,
 foodGet,
-cartDecrement
+cartDecrement,
+cartIncrement
 };

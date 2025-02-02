@@ -11,12 +11,26 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require("cors");
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://bpony-kfc-clone.vercel.app",
+  "https://bpony-kfc-clone.vercel.app",
+];
 app.use(
   cors({
-    origin: `https://bpony-kfc-clone.vercel.app`,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (e.g., mobile apps or Postman) or allowed origins
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 
 require("dotenv").config();
 
